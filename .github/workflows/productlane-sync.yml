@@ -10,7 +10,7 @@ on:
 jobs:
   sync-to-productlane:
     # Only run for specific discussion categories (customize as needed)
-    if: github.event.discussion.category.name == 'feature-requests'
+    if: github.event.discussion.category.name == 'Feature Requests' || github.event.discussion.category.name == 'feature-requests'
     
     runs-on: ubuntu-latest
     
