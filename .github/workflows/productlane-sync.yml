@@ -105,13 +105,11 @@ jobs:
     - name: Send to ProductLane
       run: |
         # ProductLane insights API endpoint
-        PRODUCTLANE_API_URL="https://productlane.com/api/v1/insights"
-        
         curl -X POST \
           -H "Authorization: Bearer ${{ secrets.PRODUCTLANE_API_TOKEN }}" \
           -H "Content-Type: application/json" \
           -d @payload.json \
-          "$PRODUCTLANE_API_URL" \
+          "https://productlane.com/api/v1/insights" \
           --fail-with-body \
           --show-error
     
@@ -128,7 +126,7 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          github.rest.discussions.createDiscussionComment({
+          github.rest.discussions.createComment({
             owner: context.repo.owner,
             repo: context.repo.repo,
             discussion_number: context.payload.discussion.number,
