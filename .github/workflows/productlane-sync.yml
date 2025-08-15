@@ -1,0 +1,120 @@
+name: Sync Discussion to ProductLane
+
+# Trigger on discussion events
+on:
+  discussion:
+    types: [created, edited, answered]
+  discussion_comment:
+    types: [created, edited]
+
+jobs:
+  sync-to-productlane:
+    # Only run for specific discussion categories (customize as needed)
+    if: github.event.discussion.category.name == 'Feature Requests' || github.event.discussion.category.name == 'Ideas'
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Prepare ProductLane payload
+      id: prepare
+      run: |
+        # Extract basic discussion details
+        DISCUSSION_TITLE="${{ github.event.discussion.title }}"
+        DISCUSSION_URL="${{ github.event.discussion.html_url }}"
+        DISCUSSION_CATEGORY="${{ github.event.discussion.category.name }}"
+        ACTION_TYPE="${{ github.event.action }}"
+        
+        # Determine content and author based on event type
+        if [[ "${{ github.event_name }}" == "discussion" ]]; then
+          # This is a discussion event (created, edited, answered)
+          CONTENT="${{ github.event.discussion.body }}"
+          AUTHOR="${{ github.event.discussion.user.login }}"
+          
+          if [[ "$ACTION_TYPE" == "created" ]]; then
+            EVENT_DESCRIPTION="New discussion created"
+            TITLE_PREFIX="[NEW] "
+          elif [[ "$ACTION_TYPE" == "edited" ]]; then
+            EVENT_DESCRIPTION="Discussion post edited"
+            TITLE_PREFIX="[EDITED] "
+          elif [[ "$ACTION_TYPE" == "answered" ]]; then
+            EVENT_DESCRIPTION="Discussion answered"
+            TITLE_PREFIX="[ANSWERED] "
+          fi
+          
+        elif [[ "${{ github.event_name }}" == "discussion_comment" ]]; then
+          # This is a comment event (created, edited)
+          CONTENT="${{ github.event.comment.body }}"
+          AUTHOR="${{ github.event.comment.user.login }}"
+          COMMENT_URL="${{ github.event.comment.html_url }}"
+          
+          if [[ "$ACTION_TYPE" == "created" ]]; then
+            EVENT_DESCRIPTION="New comment added"
+            TITLE_PREFIX="[COMMENT] "
+          elif [[ "$ACTION_TYPE" == "edited" ]]; then
+            EVENT_DESCRIPTION="Comment edited"
+            TITLE_PREFIX="[COMMENT EDITED] "
+          fi
+          
+          # For comments, use the comment URL instead of discussion URL
+          DISCUSSION_URL="$COMMENT_URL"
+        fi
+        
+        # Create JSON payload (adjust fields based on ProductLane API)
+        cat > payload.json << EOF
+        {
+          "title": "${TITLE_PREFIX}${DISCUSSION_TITLE}",
+          "description": "${CONTENT}",
+          "source": "GitHub Discussion",
+          "sourceUrl": "${DISCUSSION_URL}",
+          "author": "${AUTHOR}",
+          "category": "${DISCUSSION_CATEGORY}",
+          "tags": ["github", "community", "feature-request"],
+          "metadata": {
+            "event": "${EVENT_DESCRIPTION}",
+            "repository": "${{ github.repository }}",
+            "discussionNumber": "${{ github.event.discussion.number }}",
+            "eventType": "${{ github.event_name }}",
+            "actionType": "${ACTION_TYPE}"
+          }
+        }
+        EOF
+        
+        echo "Payload prepared for: ${EVENT_DESCRIPTION}"
+        echo "Content source: ${{ github.event_name }}"
+        cat payload.json
+    
+    - name: Send to ProductLane
+      run: |
+        # Replace with actual ProductLane API endpoint
+        PRODUCTLANE_API_URL=${{ secrets.PRODUCTLANE_API_URL }}
+        
+        curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.PRODUCTLANE_API_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d @payload.json \
+          "$PRODUCTLANE_API_URL" \
+          --fail-with-body \
+          --show-error
+    
+    - name: Log success
+      run: |
+        echo "✅ Successfully synced discussion to ProductLane"
+        echo "Discussion: ${{ github.event.discussion.title }}"
+        echo "Action: ${{ github.event.action }}"
+        echo "URL: ${{ github.event.discussion.html_url }}"
+
+    # Optional: Comment back on the discussion to confirm sync
+    - name: Add sync confirmation comment
+      if: github.event.action == 'created'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.discussions.createDiscussionComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            discussion_number: context.payload.discussion.number,
+            body: '🔄 This discussion has been automatically synced to ProductLane for tracking.'
+          });
