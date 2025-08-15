@@ -10,7 +10,7 @@ on:
 jobs:
   sync-to-productlane:
     # Only run for specific discussion categories (customize as needed)
-    if: github.event.discussion.category.name == 'Feature Requests' || github.event.discussion.category.name == 'Ideas'
+    if: github.event.discussion.category.name == 'feature-requests'
     
     runs-on: ubuntu-latest
     
@@ -18,6 +18,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
+    - name: Get current discussion upvotes
+      id: get_upvotes
+      run: |
+        # Fetch current discussion data to get up-to-date upvote count
+        DISCUSSION_DATA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/discussions/${{ github.event.discussion.number }}")
+        
+        # Extract upvote count (thumbs up reactions on the main discussion post)
+        CURRENT_UPVOTES=$(echo "$DISCUSSION_DATA" | jq '.upvote_count // 0')
+        
+        echo "CURRENT_UPVOTES=$CURRENT_UPVOTES" >> $GITHUB_ENV
+        echo "Current discussion upvotes: $CURRENT_UPVOTES"
+
     - name: Prepare ProductLane payload
       id: prepare
       run: |
@@ -62,22 +75,25 @@ jobs:
           DISCUSSION_URL="$COMMENT_URL"
         fi
         
-        # Create JSON payload (adjust fields based on ProductLane API)
+        # Create JSON payload for ProductLane insights API
+        # Add current upvote info to the content
+        if [[ "$CURRENT_UPVOTES" -gt 0 ]]; then
+          CONTENT_WITH_VOTES="${CONTENT}\n\n---\n👍 Discussion upvotes: ${CURRENT_UPVOTES}"
+        else
+          CONTENT_WITH_VOTES="${CONTENT}"
+        fi
+        
         cat > payload.json << EOF
         {
-          "title": "${TITLE_PREFIX}${DISCUSSION_TITLE}",
-          "description": "${CONTENT}",
-          "source": "GitHub Discussion",
-          "sourceUrl": "${DISCUSSION_URL}",
-          "author": "${AUTHOR}",
-          "category": "${DISCUSSION_CATEGORY}",
-          "tags": ["github", "community", "feature-request"],
-          "metadata": {
-            "event": "${EVENT_DESCRIPTION}",
-            "repository": "${{ github.repository }}",
-            "discussionNumber": "${{ github.event.discussion.number }}",
-            "eventType": "${{ github.event_name }}",
-            "actionType": "${ACTION_TYPE}"
+          "title": "${TITLE_PREFIX}${DISCUSSION_TITLE} (👍 ${CURRENT_UPVOTES})",
+          "text": "${CONTENT_WITH_VOTES}",
+          "painLevel": "UNKNOWN",
+          "origin": "API_KEY_USER",
+          "contactEmail": "${AUTHOR}@github.local",
+          "contactName": "${AUTHOR}",
+          "notify": {
+            "slack": true,
+            "email": false
           }
         }
         EOF
@@ -88,7 +104,7 @@ jobs:
     
     - name: Send to ProductLane
       run: |
-        # Replace with actual ProductLane API endpoint
+        # ProductLane insights API endpoint
         PRODUCTLANE_API_URL=${{ secrets.PRODUCTLANE_API_URL }}
         
         curl -X POST \
