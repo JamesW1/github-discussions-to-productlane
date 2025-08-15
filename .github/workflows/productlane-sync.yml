@@ -10,7 +10,7 @@ on:
 jobs:
   sync-to-productlane:
     # Only run for specific discussion categories (customize as needed)
-    if: github.event.discussion.category.name == 'Feature Requests' || github.event.discussion.category.name == 'feature-requests'
+    if: github.event.discussion.category.name == 'Feature Requests'
     
     runs-on: ubuntu-latest
     
@@ -105,7 +105,7 @@ jobs:
     - name: Send to ProductLane
       run: |
         # ProductLane insights API endpoint
-        PRODUCTLANE_API_URL=${{ secrets.PRODUCTLANE_API_URL }}
+        PRODUCTLANE_API_URL="https://productlane.com/api/v1/insights"
         
         curl -X POST \
           -H "Authorization: Bearer ${{ secrets.PRODUCTLANE_API_TOKEN }}" \
