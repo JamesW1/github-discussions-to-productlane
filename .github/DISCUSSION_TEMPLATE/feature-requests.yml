@@ -15,12 +15,14 @@ body:
         - 📅 See what is planned
         - 🎯 Track feature status in real-time, directly integrated with our Linear projects
         
-        **Not a feature request?** If you'd like to engage with our community, ask questions, or get help, please visit: https://community.directus.io
+        **Not a feature request?** If you'd like to engage with our community, ask questions, or get help, please visit [community.directus.io](https://community.directus.io)
+        
+        Please note: New discussions opened here will be automatically closed. We appreciate your understanding!
 
   - type: checkboxes
-      id: understand
-      attributes:
-        label: "Next steps"
-        options:
-          - label: "I'll submit my feature request at roadmap.directus.io"
-            required: true
+    id: understand
+    attributes:
+      label: "Next steps"
+      options:
+        - label: "I'll submit my feature request at roadmap.directus.io"
+          required: true
