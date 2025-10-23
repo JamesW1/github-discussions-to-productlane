@@ -4,9 +4,9 @@ labels:
 body:
   - type: markdown
     attributes:
-      value: |
+      value: >-
         # 🚀 Feature Requests Have Moved!
-        
+      
         We've moved feature requests to our dedicated roadmap platform for better tracking and community voting. 
         
         ## Please submit your feature request here:
