@@ -4,32 +4,24 @@ labels:
 body:
   - type: markdown
     attributes:
-      value: >-
-        # 🚀 Feature Requests Have Moved!
-      
-        We've moved feature requests to our dedicated roadmap platform for better tracking and community voting. 
+      value: |
+        **Feature requests have moved to our public roadmap.**
         
-        Please submit your feature request here: **[https://roadmap.directus.io/roadmap](https://roadmap.directus.io/roadmap)**
+        Please submit your request here: https://roadmap.directus.io/roadmap
         
-        ---
-        
-        ## Why the change?
-        
-        - ✅ Continue to vote on features you'd like to see
+        This allows you to:
+        - ✅ Vote on features you'd like to see
         - 📊 See what we're currently working on
         - 📅 See what is planned
         - 🎯 Track feature status in real-time, directly integrated with our Linear projects
         
-        ## What to do:
+        **Steps:**
+        1. Visit the roadmap
+        2. Search if your idea already exists
+        3. If it exists, upvote it and provide additional feedback on the subject
+        3. If it's new, submit your feature request there
         
-        1. Visit [roadmap.directus.io/roadmap](https://roadmap.directus.io/roadmap)
-        2. Search to see if your idea already exists
-        3. If it exists, upvote it and provide additional feedback on the subject!
-        4. If it's new, submit your feature request there
-        
-        ---
-        
-        **This GitHub discussion will be automatically closed.** Thank you for understanding!
+        This discussion will be automatically closed. Thank you!
 
   - type: checkboxes
     id: acknowledge
