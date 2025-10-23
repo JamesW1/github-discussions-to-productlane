@@ -37,4 +37,3 @@ body:
       options:
         - label: "I understand feature requests should be submitted at roadmap.directus.io"
           required: true
-```
