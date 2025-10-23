@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Feature requests have moved to our public roadmap.**
+        **Feature requests have moved to our Public Roadmap**
         
         Please submit your request here: https://roadmap.directus.io/roadmap
         
