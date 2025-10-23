@@ -14,19 +14,9 @@ body:
         - 📊 See what we're currently working on
         - 📅 See what is planned
         - 🎯 Track feature status in real-time, directly integrated with our Linear projects
-        
-        **Steps:**
-        1. Visit the roadmap
-        2. Search if your idea already exists
-        3. If it exists, upvote it and provide additional feedback on the subject
-        3. If it's new, submit your feature request there
-        
-        This discussion will be automatically closed. Thank you!
 
-  - type: checkboxes
-    id: acknowledge
-    attributes:
-      label: "Acknowledgment"
-      options:
-        - label: "I understand feature requests should be submitted at roadmap.directus.io"
-          required: true
+        **Not a feature request?** If you'd like to engage with our community, ask questions, or get help, please visit: https://community.directus.io
+        
+        Please note: New discussions opened here will be automatically closed. We appreciate your understanding!
+
+
