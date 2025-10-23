@@ -14,14 +14,13 @@ body:
         - 📊 See what we're currently working on
         - 📅 See what is planned
         - 🎯 Track feature status in real-time, directly integrated with our Linear projects
-
-        **Not a feature request?** If you'd like to engage with our community, ask questions, or get help, please visit: https://community.directus.io
         
-        - type: textarea
-            id: note
-            attributes:
-              label: "Quick note (optional)"
-              description: "This discussion will be auto-closed. Please visit roadmap.directus.io to submit your feature request!"
-            validations:
-              required: false
+        **Not a feature request?** If you'd like to engage with our community, ask questions, or get help, please visit: https://community.directus.io
 
+  - type: textarea
+    id: note
+    attributes:
+      label: "Quick note (optional)"
+      description: "This discussion will be auto-closed. Please visit roadmap.directus.io to submit your feature request!"
+    validations:
+      required: false
