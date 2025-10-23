@@ -17,6 +17,11 @@ body:
 
         **Not a feature request?** If you'd like to engage with our community, ask questions, or get help, please visit: https://community.directus.io
         
-        Please note: New discussions opened here will be automatically closed. We appreciate your understanding!
-
+        - type: textarea
+            id: note
+            attributes:
+              label: "Quick note (optional)"
+              description: "This discussion will be auto-closed. Please visit roadmap.directus.io to submit your feature request!"
+            validations:
+              required: false
 
